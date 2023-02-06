@@ -1,2 +1,2 @@
 # java_projects
-Alguns projetos desemvolvidos em java
+Alguns projetos desenvolvidos em java
