@@ -11,7 +11,7 @@ public class ContatoDAO {
 	
 	public void save(Contato contato) throws Exception {
 		
-		String sql = "INSERT INTO contatos(nome, idade, datacadastro) VALUES (?, ?, ?)";
+		String sql = "INSERT INTO contatos(nome, idade, datacadastro) VALUES (?, ?, ?);";
 		
 		Connection conn = null;
 		
@@ -20,8 +20,6 @@ public class ContatoDAO {
 		try {
 			conn = ConnectionFactory.createConnectionToMySQL();
 			
-			
-			
 			pstm = conn.prepareStatement(sql);
 			
 			pstm.setString(1, contato.getNome());
@@ -29,6 +27,8 @@ public class ContatoDAO {
 			pstm.setDate(3, new Date(contato.getDataCadastro().getTime()));
 			
 			pstm.execute();
+			
+			System.out.println("ok!");
 			
 		}catch (Exception e) {
 			e.printStackTrace();
