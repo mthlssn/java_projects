@@ -12,10 +12,15 @@ public class Main {
 		Contato contato = new Contato();
 		ContatoDAO contatoDAO = new ContatoDAO();
 		
-		contato.setNome("Pedro");
-		contato.setIdade(47);
+		contato.setNome("Ariana");
+		contato.setIdade(48);
 		contato.setDataCadastro(new Date());
 		
-		contatoDAO.save(contato);
+//		contatoDAO.save(contato);
+		
+		for (Contato c : contatoDAO.getContatos()) {
+			System.out.println("Contato: "+ c.getNome() + " | " + c.getIdade() + " | " + c.getDataCadastro());
+		}
+		
 	}
 }
