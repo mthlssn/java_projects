@@ -51,10 +51,75 @@ public class ContatoDAO {
 		}
 	}
 
-//	public void update(Contato contato) {
-//		
-//	}
+	public void update(Contato contato) {
+		
+		String sql = "UPDATE contatos SET nome = ?, idade = ? WHERE  id = ?;";
+		
+		Connection conn = null;
+		PreparedStatement pstm = null;
+		
+		try {
+			conn = ConnectionFactory.createConnectionToMySQL();
+			pstm = conn.prepareStatement(sql);
+			
+			pstm.setString(1, contato.getNome());
+			pstm.setInt(2, contato.getIdade());
+			pstm.setInt(3, contato.getId());
+			
+			pstm.execute();
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (pstm != null) {
+					pstm.close();
+				}
+				
+				if (conn != null) {
+					conn.close();
+				}
+			} catch (Exception e2) {
+				e2.printStackTrace();
+			}
+		}
+	}
 
+	public void delete(int id) {
+		
+		String sql = "DELETE FROM agenda.contatos WHERE id = ?;";
+		
+		Connection conn = null;
+		PreparedStatement pstm = null;
+		
+		try {
+			
+			conn = ConnectionFactory.createConnectionToMySQL();
+			pstm = conn.prepareStatement(sql);
+			
+			pstm.setInt(1, id);
+			
+			pstm.execute();
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				
+				if (pstm != null) {
+					pstm.close();
+				}
+				
+				if (conn != null) {
+					conn.close();
+				}
+				
+			} catch (Exception e2) {
+				e2.printStackTrace();
+			}
+		}
+	}
+	
 	public List<Contato> getContatos(){
 		
 		String sql = "SELECT * from contatos;";
