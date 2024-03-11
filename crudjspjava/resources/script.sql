@@ -1,74 +1,97 @@
--- -- HOSPITAL DB
+-- HOSPITAL DB
 
--- -- source script.sql;
+-- source script.sql;
 
--- -- TABELA ESPECIALIDADE
--- CREATE TABLE especialidade ( 
---     id INT(10) NOT NULL auto_increment, 
---     nomeEsp VARCHAR(100) NOT NULL, 
---     PRIMARY KEY (id)
--- );
+DROP DATABASE hospital;
+CREATE DATABASE hospital;
+USE hospital;
 
--- -- TABELA PLANO DE SAUDE
--- CREATE TABLE planoDeSaude ( 
---     id INT(10) NOT NULL auto_increment, 
---     nomePlan VARCHAR(100) NOT NULL, 
---     PRIMARY KEY (id)
--- );
+-- ======================================================================================
 
--- -- TABELA FICHAS
--- CREATE TABLE ficha ( 
---     id INT(10) NOT NULL auto_increment, 
---     nomePaciente VARCHAR(100) NOT NULL, 
---     numCarteiraPlano VARCHAR(10) NOT NULL, 
---     idPlanoDeSaude INT(10) NOT NULL,
---     idEspecialidade INT(10) NOT NULL,
---     PRIMARY KEY (id),
---     CONSTRAINT FK_PlanoDeSaude FOREIGN KEY (idPlanoDeSaude) REFERENCES planoDeSaude(id),
---     CONSTRAINT FK_Especialidade FOREIGN KEY (idEspecialidade) REFERENCES especialidade(id)
--- );
+-- TABELA ESPECIALIDADE
+CREATE TABLE especialidade ( 
+    id INT(10) NOT NULL auto_increment, 
+    nomeEsp VARCHAR(100) NOT NULL, 
+    PRIMARY KEY (id)
+);
 
--- --------------------------------------------------------------------------------------
+-- TABELA PLANO DE SAUDE
+CREATE TABLE planoDeSaude ( 
+    id INT(10) NOT NULL auto_increment, 
+    nomePlan VARCHAR(100) NOT NULL, 
+    PRIMARY KEY (id)
+);
 
--- -- INSERIR DADOS ESPECIALIDADE
--- INSERT INTO especialidade (nomeEsp) VALUES
--- ('Alergia'),
--- ('Anestesiologia'),
--- ('Angiologia'),
--- ('Oncologia'),
--- ('Cardiologia'),
--- ('Cirurgia Geral'),
--- ('Clínica Médica'),
--- ('Dermatologia'),
--- ('Endocrinologia'),
--- ('Ginecologia'),
--- ('Infectologia'),
--- ('Nefrologia'),
--- ('Neurologia'),
--- ('Obstetrícia'),
--- ('Ortopedia'),
--- ('Otorrinolaringologia'),
--- ('Pediatria'),
--- ('Pneumologia'),
--- ('Reumatologia'),
--- ('Urologia');
+-- TABELA FICHAS
+CREATE TABLE ficha ( 
+    id INT(10) NOT NULL auto_increment, 
+    nomePaciente VARCHAR(100) NOT NULL, 
+    numCarteiraPlano VARCHAR(10) NOT NULL, 
+    idPlanoDeSaude INT(10) NOT NULL,
+    idEspecialidade INT(10) NOT NULL,
+    PRIMARY KEY (id),
+    CONSTRAINT FK_PlanoDeSaude FOREIGN KEY (idPlanoDeSaude) REFERENCES planoDeSaude(id),
+    CONSTRAINT FK_Especialidade FOREIGN KEY (idEspecialidade) REFERENCES especialidade(id)
+);
 
--- -- INSERIR DADOS PLANO DE SAUDE
--- INSERT INTO planoDeSaude (nomePlan) VALUES
--- ('Coletivo'),
--- ('Empresarial'),
--- ('Individual'),
--- ('Familiar');
+-- ======================================================================================
 
--- -- INSERIR DADOS FICHAS
--- INSERT INTO ficha (id, nomePaciente, numCarteiraPlano, idPlanoDeSaude, idEspecialidade) VALUES
--- (01, 'Maria', '12412', 2, 19),
--- (02, 'Mateus', '14263', 3, 10),
--- (03, 'Thalisson', '14263', 2, 7),
--- (04, 'José', '14363', 2, 14),
--- (05, 'Leticia', '10108', 4, 16),
--- (06, 'Fernanda', '46717', 3, 1),
--- (07, 'Pablo', '26346', 1, 2);
+-- INSERIR DADOS ESPECIALIDADE
+INSERT INTO especialidade (nomeEsp) VALUES
+('Alergia'),
+('Anestesiologia'),
+('Angiologia'),
+('Oncologia'),
+('Cardiologia'),
+('Cirurgia Geral'),
+('Clínica Médica'),
+('Dermatologia'),
+('Endocrinologia'),
+('Ginecologia'),
+('Infectologia'),
+('Nefrologia'),
+('Neurologia'),
+('Obstetrícia'),
+('Ortopedia'),
+('Otorrinolaringologia'),
+('Pediatria'),
+('Pneumologia'),
+('Reumatologia'),
+('Urologia');
+
+-- INSERIR DADOS PLANO DE SAUDE
+INSERT INTO planoDeSaude (nomePlan) VALUES
+('Coletivo'),
+('Empresarial'),
+('Individual'),
+('Familiar');
+
+-- INSERIR DADOS FICHAS
+INSERT INTO ficha (nomePaciente, numCarteiraPlano, idPlanoDeSaude, idEspecialidade) VALUES
+("Eric Oliveira", "XX053", 4, 18),
+("Danielle Dias", "XX418", 1, 3),
+("Joel Romildo", "XX555", 2, 16),
+("Caio Assunção", "XX155", 3, 1),
+("Ricardo Gonçalves", "XX831", 2, 7),
+("Olga Wanda", "XX346", 1, 14),
+("Márcio Pedro", "XX739", 4, 9),
+("Batista Galindo", "XX541", 1, 5),
+("Gabriel Hugo", "XX973", 1, 15),
+("Eustáquio Balestero", "XX376", 4, 17)
+-- ,
+-- ("Meire Walderice", "XX704", 2, 8),
+-- ("Filipe Gusmão", "XX864", 4, 15),
+-- ("Nádia Marilúcia", "XX618", 1, 5),
+-- ("Thalisson Santos", "XX999", 4, 10),
+-- ("Lino Olavo de", "XX168", 1, 9),
+-- ("Guilherme Severino", "XX940", 2, 16),
+-- ("Melanie Telma", "XX504", 3, 6),
+-- ("Mário Robson", "XX320", 4, 9),
+-- ("Artur Robert", "XX881", 1, 16),
+-- ("Aparecida Esteves", "XX149", 2, 10)
+;
+
+-- ======================================================================================
 
 -- SHOW TABLES;
 
@@ -76,13 +99,3 @@
 -- SELECT * FROM planoDeSaude;
 -- SELECT * FROM especialidade;
 
-SELECT ficha.id, ficha.nomePaciente, ficha.numCarteiraPlano, planoDeSaude.nomePlan, especialidade.nomeEsp FROM ficha 
-INNER JOIN planoDeSaude ON planoDeSaude.id = ficha.idPlanoDeSaude 
-INNER JOIN especialidade ON especialidade.id = ficha.idEspecialidade 
--- ORDER BY ficha.id;
-WHERE ficha.id=2;
-
-----
-
-
-UPDATE ficha SET nomePaciente="Thalise", numCarteiraPlano="61378", idPlanoDeSaude=2, idEspecialidade=5 WHERE id=3;

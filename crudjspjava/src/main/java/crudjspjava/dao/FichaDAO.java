@@ -13,8 +13,17 @@ public class FichaDAO {
 	
 	private static Connection con;
 	
-	public static List<Ficha> getAllFichas() {
+	public static List<Ficha> getFichasByColumn(String coluna, Boolean inverter) {
 		List<Ficha> list = new ArrayList<Ficha>();
+		
+		String pesquisa;
+		if (inverter) {
+			pesquisa = "ficha." + coluna + " DESC";
+		} else {
+			pesquisa = "ficha." + coluna;
+		}
+		
+		System.out.println(pesquisa);
 		
 		try {
 			con = ConnectionFactory.getConnection();
@@ -22,8 +31,9 @@ public class FichaDAO {
 					"SELECT ficha.id, ficha.nomePaciente, ficha.numCarteiraPlano, planoDeSaude.nomePlan, especialidade.nomeEsp FROM ficha "
 					+ "INNER JOIN planoDeSaude ON planoDeSaude.id = ficha.idPlanoDeSaude "
 					+ "INNER JOIN especialidade ON especialidade.id = ficha.idEspecialidade "
-					+ "ORDER BY ficha.id;"
+					+ "ORDER BY " + pesquisa + ";"
 			); 
+			
 			ResultSet rs = ps.executeQuery();
 			
 			while (rs.next()) {
@@ -39,8 +49,9 @@ public class FichaDAO {
 			}
 			
 		} catch (Exception e) {
-			System.out.println(e);
+			System.out.println("procurarFichas: " + e);
 		}
+		
 		return list;
 	}
 	
@@ -74,49 +85,103 @@ public class FichaDAO {
 		}
 		
 		return ficha;
-	} 
+	}
 	
 	public static int criarFicha(Ficha f) {
 		int status = 0;
 		
-		try {
-			con = ConnectionFactory.getConnection();
-			PreparedStatement ps = (PreparedStatement) con.prepareStatement("INSERT INTO ficha (nomePaciente, numCarteiraPlano, idPlanoDeSaude, idEspecialidade) VALUES (?, ?, ?, ?)");
-		
-			ps.setString(1, f.getNomePaciente());
-			ps.setString(2, f.getNumCarteiraPlano());
-			ps.setInt(3, PlanoDeSaudeDAO.getIdByName(f.getPlanoDeSaude()));
-			ps.setInt(4, EspecialidadeDAO.getIdByName(f.getEspecialidade()));
+		if (validarCadastro(f) == 1) {
+			try {
+				status = 1;
+				
+				con = ConnectionFactory.getConnection();
+				PreparedStatement ps = (PreparedStatement) con.prepareStatement("INSERT INTO ficha (nomePaciente, numCarteiraPlano, idPlanoDeSaude, idEspecialidade) VALUES (?, ?, ?, ?)");
 			
-			status = ps.executeUpdate();
-			
-		} catch (Exception e) {
-			System.out.println(e);
+				ps.setString(1, f.getNomePaciente());
+				ps.setString(2, f.getNumCarteiraPlano());
+				ps.setInt(3, PlanoDeSaudeDAO.getIdByName(f.getPlanoDeSaude()));
+				ps.setInt(4, EspecialidadeDAO.getIdByName(f.getEspecialidade()));
+				
+				status = ps.executeUpdate();
+				
+			} catch (Exception e) {
+				System.out.println(e);
+			}
 		}
+		
 		return status;
 	}
 	
 	public static int editarFicha(Ficha f, int id) {
 		int status = 0;
 		
+		if (validarCadastro(f) == 1) {
+			try {
+				status = 1;
+				
+				con = ConnectionFactory.getConnection();
+				PreparedStatement ps = (PreparedStatement) con.prepareStatement("UPDATE ficha SET "
+						+ "nomePaciente=?, numCarteiraPlano=?, idPlanoDeSaude=?, idEspecialidade=? WHERE id=?");
+				
+				ps.setString(1, f.getNomePaciente());
+				ps.setString(2, f.getNumCarteiraPlano());
+				ps.setInt(3, PlanoDeSaudeDAO.getIdByName(f.getPlanoDeSaude()));
+				ps.setInt(4, EspecialidadeDAO.getIdByName(f.getEspecialidade()));
+				ps.setInt(5, id);
+				
+				status = ps.executeUpdate();
+				
+			} catch (Exception e) {
+				System.out.println("editarFicha: " + e);
+			}
+		}
+		return status;
+	}
+	
+	public static int apagarFicha(int id) {
+		int status = 0;
+		
 		try {
 			con = ConnectionFactory.getConnection();
-			PreparedStatement ps = (PreparedStatement) con.prepareStatement("UPDATE ficha SET "
-					+ "nomePaciente=?, numCarteiraPlano=?, idPlanoDeSaude=?, idEspecialidade=? WHERE id=?");
+			PreparedStatement ps = (PreparedStatement) con.prepareStatement("DELETE FROM ficha WHERE id=?");
 			
-			System.out.println(ps);
-			
-			ps.setString(1, f.getNomePaciente());
-			ps.setString(2, f.getNumCarteiraPlano());
-			ps.setInt(3, PlanoDeSaudeDAO.getIdByName(f.getPlanoDeSaude()));
-			ps.setInt(4, EspecialidadeDAO.getIdByName(f.getEspecialidade()));
-			ps.setInt(5, id);
+			ps.setInt(1, id);
 			
 			status = ps.executeUpdate();
 			
 		} catch (Exception e) {
 			System.out.println(e);
 		}
+		
+		return status;
+	}
+	
+	public static int validarCadastro(Ficha f) {
+		int status = 0;
+		
+		try {
+			status = 1;
+			con = ConnectionFactory.getConnection();
+			PreparedStatement ps = (PreparedStatement) con.prepareStatement("SELECT * FROM ficha "
+					+ "WHERE nomePaciente=? AND idPlanoDeSaude=? AND idEspecialidade=?;");
+			
+			ps.setString(1, f.getNomePaciente());
+			ps.setInt(2, PlanoDeSaudeDAO.getIdByName(f.getPlanoDeSaude()));
+			ps.setInt(3, EspecialidadeDAO.getIdByName(f.getEspecialidade()));
+			
+			ResultSet rs = ps.executeQuery();
+			
+			
+			while (rs.next()) {
+				status = 0;	
+			}
+			
+			System.out.println(status);
+			
+		} catch (Exception e) {
+			System.out.println("validarCadastro: "+ e);
+		}
+		
 		return status;
 	}
 }

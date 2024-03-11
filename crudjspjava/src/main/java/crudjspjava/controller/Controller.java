@@ -12,41 +12,45 @@ import javax.servlet.http.HttpServletResponse;
 import crudjspjava.dao.FichaDAO;
 import crudjspjava.modelo.Ficha;
 
+
 @WebServlet("/controller")
 public class Controller extends HttpServlet{
+	
 	protected void service(HttpServletRequest request, HttpServletResponse response) throws UnsupportedEncodingException {
 		
 		request.setCharacterEncoding("UTF-8");
 		String action = request.getParameter("action");
-		
+
 		if (action == null) {
-			action = "index";
+			action = "home";
 		}
 
 		try {
-			if (action.equals("index")) {
-				index(request, response);
+			if (action.equals("home")) {
+				home(request, response);
 			} else if (action.equals("paginaCadastrar")) {
 				paginaCadastrar(request, response);
 			} else if (action.equals("cadastrarFicha")) {
 				cadastrarFicha(request, response);
 			} else if (action.equals("editar")) {
 				paginaEditar(request, response);
-			} else if (action.equals("editarFicha")) {
+			} else if (action.equals("editarFicha")) { 
 				editarFicha(request, response);
-			} 
+			} else if (action.equals("apagar")) { 
+				apagarFicha(request, response);
+			}
 		} catch (ServletException | IOException e) {
 			e.printStackTrace();
 		} 
 	}
 	
-	private void index(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/front/viewfichas.jsp");
+	private void home(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/front/viewfichas.jsp?c=id&i=false");
 		rd.forward(request, response);
 	}
 	
 	private void paginaCadastrar(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/front/form.jsp");
+		RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/front/form.jsp?id=0");
 		rd.forward(request, response);
 	}
 	
@@ -59,18 +63,22 @@ public class Controller extends HttpServlet{
 		
 		Ficha novaficha = new Ficha(nomePaciente, numCarteiraPlano, planoDeSaude, especialidade);
 		
-		int i = FichaDAO.criarFicha(novaficha);
+		int status = FichaDAO.criarFicha(novaficha);
+		
+		if (status == 0) {
+			System.out.println("Sem cadastro para vc");
+		}
 		
 		RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/front/viewfichas.jsp");
 		rd.forward(request, response);
 	}
 	
 	private void paginaEditar(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/front/formEditar.jsp");
+		RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/front/form.jsp");
 		rd.forward(request, response);
 	}
 	
-private void editarFicha(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	private void editarFicha(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
 		String id = request.getParameter("id");
 		
@@ -81,7 +89,22 @@ private void editarFicha(HttpServletRequest request, HttpServletResponse respons
 		
 		Ficha novaficha = new Ficha(nomePaciente, numCarteiraPlano, planoDeSaude, especialidade);
 		
-		int i = FichaDAO.editarFicha(novaficha, Integer.parseInt(id));
+		int status = FichaDAO.editarFicha(novaficha, Integer.parseInt(id));
+		
+		if (status == 0) {
+			System.out.println("Sem cadastro para vc");
+		}
+		
+		RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/front/viewfichas.jsp");
+		rd.forward(request, response);
+	}
+	
+	private void apagarFicha(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
+		String id = request.getParameter("id");
+		
+		
+		int i = FichaDAO.apagarFicha(Integer.parseInt(id));
 		
 		RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/front/viewfichas.jsp");
 		rd.forward(request, response);
